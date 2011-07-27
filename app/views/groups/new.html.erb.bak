@@ -1,0 +1,97 @@
+<h1>New Group</>
+
+<%= form_tag({ 
+      :controller => "groups", 
+      :action => "new"}, 
+      :method => "get",
+      :id  => "group_and_date") do 
+%>
+<div class="field">
+    Name: <br />
+    <%= text_field_tag "name" %>
+  </div>
+  <div>
+    <table>
+    <tr>
+      <td>
+        <input type="hidden" id="called_from_index" name="called_from_index"/>
+        <ul class="checkbox-list">
+          <% Category.all.each do |category| %>
+            <li>
+              <%= category.name %>
+              <%= category.id %>
+              <%= included = include_category? category %>
+              <%# if @categories_selected.nil? && @called_from_index.nil?
+                included = true;
+              elsif !@categories_selected.nil?
+                included = @categories_selected.include?(category.id.to_s)
+              end
+              %>
+              <%= check_box_tag 'include[]', category.id, included, :onclick => "$('#group_and_date').submit()" %>
+              <%#= select_tag 'places_list', options_for_select(@places.map(&:description)), :multiple  =>  true, :size => 10 %>
+            </li>
+          <% end %>
+        </ul>
+      </td>
+
+      <td>
+        <%= select_tag 'places_list[]', options_for_select(@places.map(&:description)), :multiple  =>  true, :size => 10 %>
+      </td>
+      <td>
+        <input id="btnMoveRight" type="button" value="→" />
+        <br />
+        <input id="btnMoveLeft" type="button" value="←" />
+      </td>
+      <td>
+        <%= select_tag 'selected_list[]', options_for_select([]), :multiple  =>  true, :size => 10 %>
+      </td>
+    </tr>
+    </table>
+  </div>
+
+  <div class="actions">
+    <%= render :partial => "form" %>
+    <%#= f.submit "Create" %>
+    <%= submit_tag "Create" %>
+  </div>
+<% end %>
+
+<%= link_to 'Back', places_path %>
+<script type="text/javascript">
+
+  $(document).ready(function(){
+    document.getElementById("btnMoveRight").onclick = moveItems;
+    document.getElementById("btnMoveLeft").onclick = moveItems;
+    });
+  
+  function moveItems() {
+    var leftBox = document.getElementById("places_list_");
+    var rightBox = document.getElementById("selected_list_");
+    var fromBox, toBox;
+
+    if (this.value == "→") {
+      fromBox = leftBox; toBox = rightBox;
+    }
+    else if (this.value == "←") {
+      fromBox = rightBox; toBox = leftBox;
+    }
+
+    if ((fromBox != null) && (toBox != null)) {
+      if(fromBox.length < 1) {
+        return false;
+      }
+      if(fromBox.selectedIndex == -1) {
+        return false;
+      }
+      while ( fromBox.selectedIndex >= 0 ) {
+        var newOption = new Option();
+        newOption.text = fromBox.options[fromBox.selectedIndex].text;
+        newOption.value = fromBox.options[fromBox.selectedIndex].value;
+        toBox.options[toBox.length] = newOption;
+        fromBox.remove(fromBox.selectedIndex);
+      }
+    }
+    return false; 
+  }
+  </script>
+

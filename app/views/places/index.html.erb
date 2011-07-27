@@ -1,0 +1,35 @@
+<% 
+  @group = group 
+  @user_votes_left = user_votes_left
+%>
+
+<table>
+  <tr>
+    <td class = "navbar">
+      <%= render :partial => "command_bar" %>
+    </td>
+    <td class="aligntop">
+      <%= render :partial => "groups_bar" %>
+      <%= render :partial => "places_table" %>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    <% if(@user_votes_left == 0 ||
+          @group.id.nil? ||
+          current_user.nil? ||
+          date_selected.to_date != Time.now.to_date) %>
+          $('.inputs').attr("disabled", true);
+    <% end %>
+
+  <% @places.each do |place| %>
+    $('#show<%=place.id%>').click(function() {
+      $('#user_comments<%=place.id%>').show('slow', function(){});
+        });
+    $('#hide<%=place.id%>').click(function() {
+      $('#user_comments<%=place.id%>').hide('slow', function(){});
+        });
+  <% end %>
+});</script>

@@ -1,0 +1,132 @@
+class PlacesController < ApplicationController
+
+  #before_filter :authenticate_user!
+  #before_filter :auth_user_signin
+
+  def auth_user_signin
+    puts "USER SIGNED IN STATUS"
+    puts user_signed_in?
+    unless user_signed_in?
+      authenticate_user!
+    end
+  end
+
+  # GET /places
+  # GET /places.xml
+  def index
+    logger.info "IN INDEX"
+    logger.info params
+
+    unless params[:selected_date].nil?
+      @date_selected = params[:selected_date][:selected_date]
+    end
+    unless params()["include"].nil?
+      @categories_selected  = params["include"]
+      logger.info @categories_selected
+    end
+    unless params[:called_from_index].nil?
+      @called_from_index = true
+    end
+    @places = Place.all_votes_per_place_per_group params[:group_id], params[:sort_by]
+
+     unless @categories_selected.nil?
+       @places = @places.select{|pl| @categories_selected.include?(pl.category_id.to_s)}
+    end
+
+
+    @places = Kaminari.paginate_array(@places).page(params[:page]).per(5)
+    unless current_user.nil?
+      @my_groups = Group.by_user_and_date current_user.id, @date_selected
+    end
+    @vote = Vote.new
+
+    if params["group_id"].nil? || params[:group_id].to_s.length == 0
+      @group = Group.new
+    else
+      puts params[:group_id]
+      @group = Group.find(params[:group_id])
+    end
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @places }
+    end
+  end
+
+  # GET /places/1
+  # GET /places/1.xml
+  def show
+    puts "IN SHOW"
+    @place = Place.find(params[:id])
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml  { render :xml => @place }
+    end
+  end
+
+  # GET /places/new
+  # GET /places/new.xml
+  def new
+    puts "IN NEW"
+    @place = Place.new
+
+    respond_to do |format|
+      format.html # new.html.erb
+      format.xml  { render :xml => @place }
+    end
+  end
+
+  # GET /places/1/edit
+  def edit
+    puts "IN EDIT"
+    @place = Place.find(params[:id])
+  end
+
+  # POST /places
+  # POST /places.xml
+  def create
+    puts "IN CREATE"
+    @place = Place.new(params[:place])
+
+    respond_to do |format|
+      if @place.save
+        format.html { redirect_to(@place, :notice => 'Place was successfully created.') }
+        format.xml  { render :xml => @place, :status => :created, :location => @place }
+      else
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @place.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
+  # PUT /places/1
+  # PUT /places/1.xml
+  def update
+    puts "IN UPDATE"
+
+    @selected_date = params[:selected_date]
+    @group_id = params[:group_id]
+
+    if @group_id.nil?
+      redirect_to(places_path(
+        :selected_date => @selected_date["selected_date"]))
+    else
+      redirect_to(places_path(
+        :group_id => @group_id,
+        :selected_date => @selected_date["selected_date"]))
+    end
+  end
+
+  # DELETE /places/1
+  # DELETE /places/1.xml
+  def destroy
+    @place = Place.find(params[:id])
+    @place.destroy
+
+    respond_to do |format|
+      format.html { redirect_to(places_url) }
+      format.xml  { head :ok }
+    end
+  end
+end

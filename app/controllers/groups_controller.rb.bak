@@ -1,0 +1,83 @@
+class GroupsController < ApplicationController
+  def index
+    #NOTE multiple entries with same group FIX.
+    @my_groups = Group.find(User.find(current_user.id).invitations.map(&:group_id))
+      
+    puts @my_groups
+    @group_users = nil
+    unless params[:group_id].nil?
+      @group = Group.find(params[:group_id])
+      @invitations = @group.invitations
+      @invitations = [@invitations] unless @invitations.is_a?(Array)
+      @group_users = User.find(@invitations.map(&:user_id))
+    end
+  end
+
+  def new
+    logger.info params
+    #@group = Group.new()
+    @categories = Category.all
+    #unless params()["include"].nil?
+    #  @categories_selected  = params["include"]
+    #  logger.info @categories_selected
+    #end
+    if params["include"].nil?
+      #@categories_selected = Category.all.map(&:id)
+      @places = Place.all
+    else
+      @places = Place.all.select{|pl| @categories_selected.include?(pl.category_id.to_s)}
+    end
+  end
+
+  def join
+  end
+
+  def update
+    puts "IN UPDATE"
+
+    @user_ids_to_include = params()["include"]
+    @group_id = params()["group_id"]
+    group = Group.find(@group_id)
+    group.update_invitations @user_ids_to_include, @group_id
+    puts @user_ids_to_include
+
+    redirect_to(groups_path(:group_id  => @group_id));
+  end
+
+  def show
+    @group = Group.find(params[:id])
+    @invitations = @group.invitations
+    @invitations = [@invitations] unless @invitations.is_a?(Array)
+    @users = User.find(@invitations.map(&:user_id))
+
+    # Create an invitation for the current user
+    @group.invitations.create({
+      :user_id  =>  current_user.id,
+      :group_id =>  @group.id
+    })
+  end
+
+  def create
+    @group = Group.new(:id => params["name"])
+
+    logger.info params
+#    respond_to do |format|
+#      if @group.save
+#        format.html { redirect_to(@group, :notice => 'Group was successfully created.') }
+#        format.xml  { render :xml => @group, :status => :created, :location => @group }
+#      else
+#        format.html { render :action => "new" }
+#        format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
+#      end
+#    end
+
+    @user_ids_to_include = params()["include"]
+    puts "group create"
+    puts @user_ids_to_include
+    puts @group.id
+    #@group.update_invitations @user_ids_to_include, @group.id
+
+    #@group.add_places
+
+  end
+end

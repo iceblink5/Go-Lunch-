@@ -1,0 +1,60 @@
+  <span class="actions">
+    <table class = "navbar">
+    <b>
+    <% unless current_user.nil? %>
+      <% if Invitation.where(:user_id => current_user.id).size != 0 %>
+      <tr>
+      <td>
+      <%= link_to 'Manage Groups', groups_path %>
+      </td>
+      </tr>
+      <tr>
+      <% end %>
+      <td class="navbar">
+      <%= link_to 'Create New Group', new_group_path %>
+      </td>
+      </tr>
+      <tr>
+      <td class="navbar">
+      <%= link_to 'New Place', new_place_path %>
+      </td>
+      </tr>
+    <% if current_user.email == "admin@admin.com" %>
+      <tr>
+      <td class="navbar">
+      <%= link_to 'New Category', new_category_path %>
+      </td>
+      </tr>
+    <% end %>
+    <% end %>
+    </b>
+    </table>
+  </span>
+
+<%= form_tag({ 
+      :controller => "places", 
+      :action => "index"}, 
+      :method => "get",
+      :id  => "group_and_date") do 
+%>
+  
+  <% @date_array = ((1.year.ago.to_date)..(Date.today)).to_a.map{|x| x.to_s(:db)}.reverse %>
+
+  <b>Date:</b>
+  <%= select_tag "selected_date", options_from_collection_for_select(
+        @date_array, :to_s,  :to_s, date_selected),
+        {:onchange  => "$('#group_and_date').submit()"}
+  %>
+  <%= hidden_field_tag "group_id", @group.id %>
+  <input type="hidden" id="called_from_index" name="called_from_index"/>
+  <ul class="checkbox-list">
+    <% Category.all.each do |category| %>
+      <li>
+        <%= category.name %>
+        <% included = include_category? category %>
+        <%= check_box_tag 'include[]', category.id, included, :onclick => "$('#group_and_date').submit()" %>
+      </li>
+    <% end %>
+  </ul>
+<% end #form_tag %>
+</br>

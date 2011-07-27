@@ -1,0 +1,75 @@
+<script type="text/javascript">
+
+  $(document).ready(function(){
+     if (document.getElementById("btnMoveRight") && 
+         document.getElementById("btnMoveLeft"))
+    {
+      document.getElementById("btnMoveRight").onclick = moveItems;
+      document.getElementById("btnMoveLeft").onclick = moveItems;
+    }
+    });
+  
+  function sendSelectedList(){
+    var cats = jQuery.makeArray();
+    $.each($("input[name='include[]']:checked"), function() {
+          cats.push($(this).val());
+    });
+
+    //alert($("select[name='selected_list[]']").text());
+    var pls = jQuery.makeArray();
+    $.each($("select[name='selected_list[]']"), function() {
+          pls.push($(this).text());
+    });
+    
+    $.get(
+        "/groups/refresh_places_list",
+        {"selected_categories":cats,
+         "selected_list":pls},
+        function(data)
+        {}
+        );
+  }
+
+  function setParamFields(){
+    var selections = document.getElementById("selected_list");
+    var values = new Array();
+
+    for(i=0; i<selections.options.length; i++)
+    {
+      values.push(selections.options[i].value);
+    }
+
+    $('#selected_places').val(values)
+  }
+
+  function moveItems() {
+    var leftBox = document.getElementById("places_list");
+    var rightBox = document.getElementById("selected_list");
+    var fromBox, toBox;
+
+    if (this.value == "→") {
+      fromBox = leftBox; toBox = rightBox;
+    }
+    else if (this.value == "←") {
+      fromBox = rightBox; toBox = leftBox;
+    }
+
+    if ((fromBox != null) && (toBox != null)) {
+      if(fromBox.length < 1) {
+        return false;
+      }
+      if(fromBox.selectedIndex == -1) {
+        return false;
+      }
+
+      while (fromBox.selectedIndex >= 0 ) {
+        var newOption = new Option();
+        newOption.text = fromBox.options[fromBox.selectedIndex].text;
+        newOption.value = fromBox.options[fromBox.selectedIndex].value;
+        toBox.options[toBox.length] = newOption;
+        fromBox.remove(fromBox.selectedIndex);
+      }
+    }
+    return false; 
+  }
+  </script>

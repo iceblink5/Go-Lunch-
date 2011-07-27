@@ -1,0 +1,66 @@
+<table class='navbar fixedwidth900'>
+  <% @places = places_filtered %>
+  <tr>
+    <% if @places.size == 0 %>
+      <th> orz - sorry, no places match that criteria </th>
+    <% else %>
+      <th class="fixedcolwidth"><%= link_to_sorted "Genre", @group.id %></th>
+      <th><%= link_to_sorted "Place", @group.id %></th>
+      <th><%= link_to_sorted "Votes", @group.id %></th>
+      <th></th>
+      <th>Comment</th>
+      <th></th>
+    <% end %>
+  </tr>
+
+  <% @places.each do |place| %>
+  <tr>
+    <td><%= place.category.name unless place.category.nil? %></td>
+    <td><%= link_to place.description, place_path(place) %>
+    </td>
+    <td><%= place.number_of_votes %></td>
+
+    <%= form_for(@vote) do |f| %>
+    <td>
+      <div class="actions">
+        <%= f.hidden_field :place_id, :value  =>  place.id %>
+        <% unless current_user.nil? %>
+          <%= f.hidden_field :user_id, :value => current_user.id %>
+        <% end %>
+        <%= f.hidden_field :group_id, :value => @group.id %>
+        <%= f.submit "Vote", :id => "voteButton", :class  => "inputs big_button" %>
+        <%= f.submit "UnVote", :id => "unvoteButton", :disabled => unvote_disable?(place.id, @group.id) %>
+      </div>
+    </td>
+    <td>
+      <div class="field">
+        <%= f.text_field :comment,
+                        :id  => "comment_field#{place.id}", 
+                        :class  =>  "inputs",
+                        :size => 15 %>
+      </div>
+    </td>
+    <td>
+      <span id="show<%=place.id%>">
+        <b>Show |
+      </span>
+      <span id="hide<%=place.id%>">
+        Hide</b>
+      </span>
+      <div id="user_comments<%=place.id%>">
+        <table class='comments'>
+          <% place.votes.each do |vote| %>
+            <% if (!vote.comment.nil? && vote.comment.length != 0 && vote.created_at.to_date == date_selected.to_date) %>
+              <tr><td><%= User.find(vote.user_id).first_name %>: <%= vote.comment %></td></tr>
+            <% end %>
+          <% end %>
+        </table>
+      </div>
+    </td>
+      <% end %>
+  </tr>
+  <% end %>
+  <% if @places.size > 6 %>
+    <tr><td><%= paginate @places %></td></tr>
+  <% end %>
+</table>

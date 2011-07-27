@@ -1,0 +1,57 @@
+  <table class="cat_sel_table">
+    <tr>
+      <td>Categories</td>
+      <td>Places Available</td>
+      <td></td>
+      <td>Selected Places</td>
+      <td>Members Selected</td>
+    </tr>
+    <tr>
+      <td>
+        <input type="hidden" id="called_from_index" name="called_from_index"/>
+        <input type="hidden" id="selected_places" name="selected_places"/>
+        <ul class="checkbox-list">
+          <% Category.all.each do |category| %>
+            <li>
+              <%= category.name %>
+              <%= category.id %>
+              <% included = include_category? category %>
+              <%= check_box_tag 'include[]',
+                    category.id, included, 
+                    :onclick => "sendSelectedList()" %>
+            </li>
+          <% end %>
+        </ul>
+      </td>
+      <td>
+        <% if @selected_places.nil?
+            selected_places = []
+          else
+            selected_places = @selected_places.map(&:description)
+          end 
+        %> 
+        <%= select_tag 'places_list',
+          options_for_select(
+            places_based_on_category.map(&:description).select do |place|
+              !selected_places.include?(place)
+            end),
+              :multiple  =>  true, 
+              :size      => 10 %>
+      </td>
+      <td class="fixedcolwidth50">
+        <input id="btnMoveRight" type="button" value="→" />
+        <br/>
+        <input id="btnMoveLeft" type="button" value="←" />
+      </td>
+      <td>
+
+        <%= select_tag 'selected_list',
+              options_for_select(selected_places),
+              :multiple  =>  true, 
+              :size      => 10 %>
+      </td>
+      <td>
+        <%= render :partial  =>  "shared/members_selection" %>
+      </td>
+    </tr>
+  </table>

@@ -1,0 +1,9 @@
+<h1><%= @group.name %></h1>
+
+<% @users.each do |user| %>
+  <div class="field">
+    <%= user.first_name %> <%= user.last_name %>
+  </div>
+<% end %>
+
+<%= link_to 'Back', places_path %>

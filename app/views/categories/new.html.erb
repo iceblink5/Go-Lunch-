@@ -1,0 +1,21 @@
+<table>
+  <tr>
+    <td>
+      <%= link_to 'Back', places_path %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="field">
+        <%= form_for(@category) do |f| %>
+          <%= f.label :name %><br />
+          <%= f.text_field :name %>
+      </div>
+      <div class="actions">
+          <%= f.submit "Create" %>
+        <% end %>
+      </div>
+    </td>
+  </tr>
+</table>
+

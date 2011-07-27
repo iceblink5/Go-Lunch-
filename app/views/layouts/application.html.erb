@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GoLunch</title>
+  <%#= stylesheet_link_tag :all %>
+  <%= stylesheet_link_tag 'blueprint/screen', :media => 'screen' %>
+  <%= stylesheet_link_tag 'blueprint/screen', :media => 'screen' %>
+  <%= stylesheet_link_tag 'blueprint/plugins/tabs/screen', :media => 'screen' %>
+  <%= javascript_include_tag :defaults %>
+  <%= csrf_meta_tag %>
+</head>
+<body>
+  <table class="navbar">
+    <tr>
+      <td>
+        <% logo = image_tag "golunch-beta.jpg" %>
+        <%= link_to logo, root_path %>
+      </td>
+      <td class="alignright">
+        <% if user_signed_in? %>
+          (<%= current_user.last_name %> <%= current_user.first_name %>さん)
+          <%= link_to 'Logout', '/users/sign_out' %>
+        | <%= link_to 'Edit Account Info', '/users/edit' %>
+        <% else %>
+          <%= link_to 'Sign In', user_session_path %>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+<table class="navbar">
+  <tr>
+    <td class="headerline">
+<%
+  if current_user.nil?
+%>
+  </br>
+<%
+  else
+    @user_votes_left = user_votes_left
+%>
+        <strong>今日の残り投票数:<%= @user_votes_left %></strong>
+        <strong><%= @current_page_name %></strong>
+<% end %>
+    </td>
+  </tr>
+</table>
+
+<%= yield %>
+              
+</body>
+</html>

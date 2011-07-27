@@ -1,0 +1,36 @@
+<table class="navbar"> 
+  <% unless @my_groups.nil? || @my_groups.empty? %>
+    <tr>
+      <td>
+        <b>My Groups:</b>
+        <% if @group.id.nil? %> 
+          <span class = "boxselected">View All</span>
+        <% else %>
+        <%=
+          link_to "All Groups", 
+          places_path(:selected_date => date_selected), :class => "box1"
+        %>
+        <% end %>
+        <% @my_groups.each do |my_group| %>
+          <% if my_group.id == @group.id %>
+            | <span class = "boxselected"><%= my_group.name %></span>
+          <% else %>
+            | <%= link_to my_group.name, places_path(:group_id => my_group.id, :selected_date => date_selected), :class => "box1" %>
+          <% end %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+<% unless @group_users.nil? %>
+  <tr>
+    <td class="navbar"><b>Group Members:</b>
+      <% @group_users.each do |user| %>
+        <%= user.last_name %> <%= user.first_name %>
+        <% if user != @group_users.last %>
+          ,
+        <% end %>
+      <% end %>
+    </td>
+  </tr>
+<% end %>
+</table> 

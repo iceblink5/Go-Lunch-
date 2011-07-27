@@ -1,0 +1,32 @@
+<%= form_for(@place) do |f| %>
+  <% if @place.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@place.errors.count, "error") %>
+        prohibited this place from being saved:</h2>
+      <ul>
+        <% @place.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </div>
+
+  <div class="field">
+    <%= label_tag "Category" %>
+    <%= select_tag :category,
+      options_from_collection_for_select(Category.all, :id, :name) %>
+  </div>
+
+  <div class="field">
+    <%#= f.hidden_field :votes, :value => 1 %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Create" %>
+  </div>
+<% end %>

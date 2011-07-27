@@ -1,0 +1,62 @@
+<table class="navbar"> 
+  <tr>
+    <td>
+      <%= link_to 'Back', places_path %>
+    </td>
+  </tr>
+  <tr>
+    <td><b>My Groups:</b>
+    <% @my_groups.each do |my_group| %>
+        <% if my_group.id == @group.id %>
+        | <span class = "boxselected"><%= my_group.name %></span>
+        <% else %>
+          | <%= link_to my_group.name, groups_path(:group_id   =>  my_group.id), :class => "box1" %>
+        <% end %>
+    <% end %>
+   </td>
+  </tr>
+  <tr>
+    <td><b>Group Members:</b>
+      <% unless @group_users.nil? %>
+      <% @group_users.each do |user| %>
+      <%= user.first_name %> <%= user.last_name %>
+        <% if user != @group_users.last %>
+          ,
+        <% end %>
+      <% end %>
+      <% end %>
+    </td>
+  </tr>
+</table>
+
+<% unless @group_users.nil? %>
+<div class="field">
+  <% form_tag(
+    {:controller => "groups", 
+     :action  => "update"}, 
+     :method  => "put",
+     :id  => "group_and_date",
+     :onSubmit  => "setParamFields();") do %>
+</div>
+
+<br/>
+<table>
+  <tr>
+    <td>
+      Group Name: <br/>
+      <%= text_field_tag "name", "#{Group.find(@group_id).name}" %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+        <%= render :partial => "shared/places_filter" %>
+    </td>
+  </tr>
+</table>
+<div>
+  <%= submit_tag("Update") %>
+  <% end %>
+<% end %>
+</div>
+
+<%= render :partial => "shared/places_filter_scripts" %>

@@ -1,0 +1,38 @@
+<h1>Listing places</h1>
+
+<table>
+  <tr>
+    <th>Description</th>
+    <th>Votes</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @places.each do |place| %>
+  <tr>
+    <td><%= place.description %></td>
+    <td><%= place.votes %></td>
+
+    <% if false %>
+    <td><%= link_to 'Show', place %></td>
+    <td><%= link_to 'Edit', edit_place_path(place) %></td>
+    <td><%= link_to 'Destroy', place, :confirm => 'Are you sure?', :method => :delete %></td>
+    <% end %>
+
+<%= form_for(place) do |f| %>
+  <div class="field">
+    <%= f.hidden_field :votes, :value => 1 %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Vote" %>
+  </div>
+<% end %>
+
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Place', new_place_path %>

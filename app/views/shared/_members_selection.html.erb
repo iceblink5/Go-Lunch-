@@ -1,0 +1,17 @@
+<input type="hidden" id="group_id" name="group_id" value="<%= @group.id unless @group.nil? %>"/>
+<table>
+  <tr>
+    <td>
+<ul class="checkbox-list">
+  <% User.all.each do |user| %>
+    <li>
+      <%= user.first_name %>
+      <%= user.id %>
+      <% check = Invitation.where(:user_id => user.id).map(&:group_id).include?(@group.id) unless @group.nil? %>
+      <%= check_box_tag 'members[]', user.id, check || current_user.id == user.id, :disabled  =>  current_user.id == user.id %>
+    </li>
+  <% end %>
+</ul>
+    </td>
+  </tr>
+</table>

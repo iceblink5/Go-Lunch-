@@ -1,0 +1,8 @@
+$('#places_list').replaceWith(
+    "<%= escape_javascript(
+      select_tag 'places_list',
+      options_for_select(@places.map(&:description)),
+      :multiple  =>  true, 
+      :size      => 10 
+    ) %>"
+  );

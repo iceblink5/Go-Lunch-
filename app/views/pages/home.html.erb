@@ -1,0 +1,39 @@
+<h1><%= current_user.first_name %> <%= current_user.last_name %> </h1>
+<div>
+  <b>Groups Invited:</b>
+<table class='places'>
+  <tr>
+    <!-- <td>Date</td> -->
+    <td>Group Name</td>
+  </tr>
+<% @my_groups.each do |group| %>
+  <tr>
+    <td><%= group.name %></td>
+  </tr>
+<% end %>
+</table>
+
+</div>
+<div>
+  <b>Votes History:</b>
+</div>
+
+<table class='places'>
+  <tr>
+    <td>Date</td>
+    <td>Comment</td>
+    <td>My Votes</td>
+    <td>Total Votes</td>
+  </tr>
+<% @my_votes.each do |vote| %>
+  <tr>
+    <td><%= vote.created_at.strftime('%F') %></td>
+    <td><%= vote.place.description %></td>
+    <td><%= vote.place.votes.where('user_id = ?', current_user.id).size %></td>
+    <td><%= vote.place.votes.size %></td>
+  </tr>
+<% end %>
+</table>
+<div>
+<%= link_to 'Back', places_path %>
+</div>

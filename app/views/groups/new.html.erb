@@ -1,0 +1,33 @@
+<table>
+  <tr>
+    <td>
+      <%= link_to 'Back', places_path %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+<div class="field">
+  <%= form_tag(
+        { 
+        :controller => "groups", 
+        :action => "create"}, 
+        :method => "post",
+        :id  => "group_and_date",
+        :onSubmit  => "setParamFields();") do 
+  %>
+  Name: <br/>
+  <%= text_field_tag "name" %>
+</div>
+
+<div>
+  <%= render :partial => "shared/places_filter" %>
+</div>
+
+<div>
+  <%= submit_tag "Create" %>
+  <% end %>
+</div>
+<%= render :partial => "shared/places_filter_scripts" %>
+    </td>
+  </tr>
+</table>

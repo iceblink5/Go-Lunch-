@@ -1,0 +1,86 @@
+<% user_votes_cast_today = @user_votes.where('DATE(created_at) = ?', Date.today).size %>
+<h1>のこり投票数:<%= 3-user_votes_cast_today %></h1>
+
+<table class='places'>
+  <tr>
+    <th>Description</th>
+    <th>Votes</th>
+    <th></th>
+    <th></th>
+    <th>Comment</th>
+  </tr>
+
+  <%# @places.sort!{|a,b| b.votes.size <=> a.votes.size}.each do |place| %>
+  <% @places.each do |place| %>
+  <% votes_cast_today = place.votes.where('DATE(created_at) = ?', Date.today).size %>
+  <%# votes_cast_today = place.votes.size %>
+  <tr>
+    <td><%= place.description %></td>
+    <td><%= votes_cast_today %></td>
+
+    <%= form_for(@vote) do |f| %>
+  <td>
+    <div class="field">
+      <%= f.text_field :comment, :id  => "comment_field#{place.id}", :class  =>  "inputs" %>
+    </div>
+    <div class="field">
+    <%= f.hidden_field :place_id, :value  =>  place.id %>
+    </div>
+  </td>
+  <td>
+    <div class="actions">
+      <%= f.hidden_field :user_id, :value => current_user.id %>
+      <%= f.submit "Vote", :class  => "inputs" %>
+    </div>
+  </td>
+  <td>
+    <span id="show<%=place.id%>">
+      <b>Show |
+    </span>
+    <span id="hide<%=place.id%>">
+      Hide</b>
+    </span>
+    <div id="user_comments<%=place.id%>">
+      <table class='comments'>
+        <% place.votes.where('DATE(created_at) = ?', Date.today).each do |vote| %>
+          <% if (!vote.comment.nil? && vote.comment.length != 0) %>
+            <tr><td><%= vote.comment %></td></tr>
+          <% end %>
+        <% end %>
+      </table>
+    </div>
+  </td>
+  </td>
+  <% end %>
+
+  </tr>
+<% end %>
+</table>
+
+<br/>
+
+
+<%= link_to 'New Place', new_place_path %>
+<% if user_signed_in? %>
+<%= link_to 'Logout', '/users/sign_out' %>
+<%= link_to 'Edit Account Info', '/users/edit' %>
+<%= link_to 'My Home', pages_home_path %>
+<% end %>
+<script type="text/javascript">
+$(document).ready(function(){
+<% if(user_votes_cast_today == 3) %>
+$('.inputs').hide('slow', function(){});
+<% end %>
+
+
+<% @places.each do |place| %>
+$('#show<%=place.id%>').click(function() {
+  $('#user_comments<%=place.id%>').show('slow', function(){});
+    });
+$('#hide<%=place.id%>').click(function() {
+  $('#user_comments<%=place.id%>').hide('slow', function(){});
+    });
+<% end %>
+
+});</script>
+

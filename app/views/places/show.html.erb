@@ -1,0 +1,42 @@
+<p id="notice"><%= notice %></p>
+<table>
+  <tr>
+    <td>
+      <%= link_to 'Back', places_path %>
+    </td>
+  </tr>
+  <tr>
+    <td>
+<% unless @place.votes.empty?%>
+  <b>Votes:</b>
+  <table> 
+    <tr>
+      <td>Date</td><td>Time</td><td>Name</td><td>Comment</td>
+    </tr>
+    <% @place.votes.each do |vote| %>
+    <tr>
+      <td>
+        <%= vote.created_at.to_date %>
+      </td>
+      <td>
+        <%= vote.created_at.strftime("%H:%M")%>
+      </td>
+      <td>
+        <% @user = User.find(vote.user_id) %>
+        <%= @user.first_name %> <%= @user.last_name %>
+      </td>
+      <td>
+        <%= vote.comment %>
+      </td>
+    </tr>
+    <% end %>
+  </table>
+<% end %>
+    </td>
+  </tr>
+  <% unless current_user.nil? %>
+  <tr>
+    <td><%= link_to 'Delete Place', @place, :confirm  =>  'Delete Place from All groups?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
